@@ -1,0 +1,151 @@
+@import "tailwindcss";
+
+@theme {
+  --color-lichen: #edf0ea;
+  --color-paper: #fbfcfa;
+  --color-bark: #1e2b24;
+  --color-gum: #35634f;
+  --color-gum-deep: #244536;
+  --color-leaf: #dbe5dc;
+  --color-wattle: #f2c230;
+  --color-wattle-soft: #fbefc4;
+  --color-redgum: #a23a22;
+  --color-granite: #5f665f;
+  --color-line: #cdd5cb;
+
+  --font-display: "Literata", "Iowan Old Style", "Palatino Linotype", Georgia, serif;
+  --font-sans: "Atkinson Hyperlegible", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+
+html {
+  background: var(--color-lichen);
+  color: var(--color-bark);
+  font-family: var(--font-sans);
+  font-size: 17px;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  min-height: 100dvh;
+  line-height: 1.5;
+}
+
+h1,
+h2,
+h3 {
+  font-family: var(--font-display);
+  line-height: 1.2;
+  text-wrap: balance;
+}
+
+:focus-visible {
+  outline: 3px solid var(--color-wattle);
+  outline-offset: 2px;
+}
+
+@layer components {
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.4rem;
+    min-height: 44px;
+    padding: 0.5rem 1.15rem;
+    border-radius: 999px;
+    font-weight: 700;
+    line-height: 1.2;
+    cursor: pointer;
+    transition: background-color 0.15s, color 0.15s;
+  }
+  .btn:disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+  }
+  .btn-primary {
+    background: var(--color-gum);
+    color: #fff;
+  }
+  .btn-primary:hover:not(:disabled) {
+    background: var(--color-gum-deep);
+  }
+  .btn-secondary {
+    background: #fff;
+    color: var(--color-gum-deep);
+    box-shadow: inset 0 0 0 1.5px var(--color-gum);
+  }
+  .btn-secondary:hover:not(:disabled) {
+    background: var(--color-leaf);
+  }
+  .btn-danger {
+    background: #fff;
+    color: var(--color-redgum);
+    box-shadow: inset 0 0 0 1.5px var(--color-redgum);
+  }
+  .btn-danger:hover:not(:disabled) {
+    background: #f7e7e2;
+  }
+
+  .field {
+    width: 100%;
+    min-height: 44px;
+    padding: 0.55rem 0.8rem;
+    border: 1.5px solid var(--color-line);
+    border-radius: 10px;
+    background: #fff;
+  }
+  .field:focus {
+    outline: none;
+    border-color: var(--color-gum);
+    box-shadow: 0 0 0 3px var(--color-leaf);
+  }
+  .label {
+    display: block;
+    margin-bottom: 0.3rem;
+    font-weight: 700;
+  }
+  .hint {
+    font-size: 0.9rem;
+    color: var(--color-granite);
+  }
+
+  .panel {
+    background: var(--color-paper);
+    border: 1px solid var(--color-line);
+    border-radius: 14px;
+  }
+
+  .link {
+    color: var(--color-gum-deep);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+
+  /* The library "date due" stamp */
+  .stamp {
+    display: inline-block;
+    padding: 0.05rem 0.45rem;
+    border: 2px solid currentColor;
+    border-radius: 5px;
+    background: rgb(255 255 255 / 0.92);
+    font-size: 0.8rem;
+    font-weight: 700;
+    line-height: 1.35;
+    letter-spacing: 0.01em;
+    transform: rotate(-4deg);
+    white-space: nowrap;
+  }
+
+  .book-shadow {
+    box-shadow:
+      inset 4px 0 0 rgb(0 0 0 / 0.12),
+      0 1px 2px rgb(30 43 36 / 0.25),
+      0 6px 14px -6px rgb(30 43 36 / 0.45);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    transition: none !important;
+    animation: none !important;
+  }
+}
