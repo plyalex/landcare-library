@@ -1,6 +1,6 @@
 # Landcare Library
 
-A book-lending library for Balmattum Sheans Creek Landcare members.
+A book-lending library for Balmattum Sheans Creek Landcare members. 
 
 Members photograph their bookshelf and the app reads the spines, looks up each book and adds it to a shared catalogue. Anyone in the group can ask to borrow a book through an in-app message. Loans run for one month with up to two renewals. Return reminders go out by email, and a "Who has what" page shows every book that's out, who has it and when it's due back.
 
