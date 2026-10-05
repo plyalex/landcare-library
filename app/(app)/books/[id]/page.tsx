@@ -44,7 +44,7 @@ export default async function BookPage({ params }: { params: Promise<{ id: strin
     <div className="grid gap-8 md:grid-cols-[minmax(0,16rem)_1fr] md:gap-12">
       <div className="mx-auto w-48 md:w-full">
         <div className="relative">
-          <BookCover src={book.cover_url} title={book.title} author={book.authors[0]} size="lg" className="w-full" />
+          <BookCover src={book.cover_url} title={book.title} author={book.authors[0]} isbn={book.isbn} size="lg" className="w-full" />
           <span className={`stamp absolute -right-2 bottom-5 text-base ${STAMP_CLASS[status.kind]}`}>{status.stamp}</span>
         </div>
       </div>

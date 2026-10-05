@@ -130,6 +130,7 @@ export default function CatalogBrowser({ books, meId, today, initialFilter }: Pr
                       src={b.cover_url}
                       title={b.title}
                       author={b.authors[0]}
+                      isbn={b.isbn}
                       className="w-full"
                     />
                     <span className={`stamp absolute -right-1 bottom-3 ${STAMP_CLASS[status.kind]}`}>
