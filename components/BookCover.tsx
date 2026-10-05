@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 const SPINE_COLOURS = ["#35634f", "#7a4b2a", "#2f4858", "#a23a22", "#5b5a2e", "#4a3f5c"];
 
@@ -14,6 +14,8 @@ type Props = {
   src: string | null;
   title: string;
   author?: string;
+  /** Used to look for a sharper cover on Open Library when the stored one is low-res */
+  isbn?: string | null;
   size?: "sm" | "md" | "lg";
   className?: string;
 };
@@ -43,11 +45,45 @@ function sizedCover(src: string, size: keyof typeof TARGET_WIDTH): string {
   return src;
 }
 
+/** URLs to try in order: the sized version, a large Open Library cover by ISBN, then the stored URL */
+function coverCandidates(src: string, isbn: string | null | undefined, size: keyof typeof TARGET_WIDTH) {
+  const urls = [sizedCover(src, size)];
+  if (isbn && size !== "sm" && !src.includes("covers.openlibrary.org")) {
+    urls.push(`https://covers.openlibrary.org/b/isbn/${encodeURIComponent(isbn)}-L.jpg?default=false`);
+  }
+  urls.push(src);
+  return [...new Set(urls)];
+}
+
 /** A book cover, or a cloth-bound stand-in when there's no image */
-export default function BookCover({ src, title, author, size = "md", className = "" }: Props) {
-  // 0 = sized image, 1 = original stored URL, 2 = give up and show the stand-in
+export default function BookCover({ src, title, author, isbn, size = "md", className = "" }: Props) {
+  const candidates = src ? coverCandidates(src, isbn, size) : [];
   const [attempt, setAttempt] = useState(0);
-  const failed = attempt >= 2;
+  // A cover that loaded but came back low-res; used if nothing sharper turns up
+  const [lowRes, setLowRes] = useState<string | null>(null);
+  // After every candidate has been tried, fall back to the low-res cover, then to the stand-in
+  const current = attempt < candidates.length ? candidates[attempt] : attempt === candidates.length ? lowRes : null;
+  const failed = !current;
+  const imgRef = useRef<HTMLImageElement>(null);
+
+  // Some sources only hold a small thumbnail and ignore the requested size, so move on to the next
+  function handleLoad(img: HTMLImageElement) {
+    const tooSmall = img.naturalWidth < TARGET_WIDTH[size] * 0.6;
+    if (tooSmall && attempt < candidates.length - 1) {
+      setLowRes((prev) => prev ?? current);
+      setAttempt((a) => a + 1);
+    }
+  }
+
+  // A server-rendered image can finish loading before hydration, so its load/error events are missed
+  useEffect(() => {
+    const img = imgRef.current;
+    if (!img?.complete) return;
+    if (img.naturalWidth === 0) setAttempt((a) => a + 1);
+    else handleLoad(img);
+    // only on mount: later loads fire the event handlers normally
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   if (!src || failed) {
     return (
@@ -73,11 +109,13 @@ export default function BookCover({ src, title, author, size = "md", className =
   return (
     // eslint-disable-next-line @next/next/no-img-element
     <img
-      src={attempt === 0 ? sizedCover(src, size) : src}
+      ref={imgRef}
+      src={current}
       alt={`Cover of ${title}`}
       loading="lazy"
       decoding="async"
-      onError={() => setAttempt((a) => (a === 0 && sizedCover(src, size) !== src ? 1 : 2))}
+      onLoad={(e) => handleLoad(e.currentTarget)}
+      onError={() => setAttempt((a) => a + 1)}
       className={`book-shadow aspect-[2/3] rounded-[3px] bg-leaf object-cover ${className}`}
     />
   );
